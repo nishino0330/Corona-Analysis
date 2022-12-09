@@ -91,19 +91,44 @@ class OpenSourceController extends Controller
             "AllGraph" => [],
             "TokyoGraph" => []
         ];
+
+        $All_DeceasedBefore = 0;
+        $Tokyo_DeceasedBefore = 0;
         foreach($records as $idx => $row) {
-            $deceased['date'][] = date("Y-m-d", strtotime($row['Date']));
-            $deceased['AllGraph'][] = $row['ALL'];
-            $deceased['TokyoGraph'][] = $row['Tokyo'];
+            // １日毎
+            $Deaths_Per_Day['date'][] = date("Y-m-d", strtotime($row['Date']));
+            $Deaths_Per_Day['AllGraph'][] = $row['ALL'] - $All_DeceasedBefore;
+            $Deaths_Per_Day['TokyoGraph'][] = $row['Tokyo'] - $Tokyo_DeceasedBefore;
+
+            // 累計
+            $Cumulative_deceased['date'][] = date("Y-m-d", strtotime($row['Date']));
+            $Cumulative_deceased['AllGraph'][] = $row['ALL'];
+            $Cumulative_deceased['TokyoGraph'][] = $row['Tokyo'];
+
+            $All_DeceasedBefore = $row['ALL'];
+            $Tokyo_DeceasedBefore = $row['Tokyo'];
         }
         // TASU or unshift
-        $deceased['date'][] = "日付";
-        $deceased['AllGraph'][] = "全国";
-        $deceased['TokyoGraph'][] = "東京";
+        $Deaths_Per_Day['date'][] = "日付";
+        $Deaths_Per_Day['AllGraph'][] = "全国";
+        $Deaths_Per_Day['TokyoGraph'][] = "東京";
+
+        $Cumulative_deceased['date'][] = "日付";
+        $Cumulative_deceased['AllGraph'][] = "全国";
+        $Cumulative_deceased['TokyoGraph'][] = "東京";
+
         // 逆順にデータを格納
-        $deceased['date'] = array_reverse($deceased['date']);
-        $deceased['AllGraph'] = array_reverse($deceased['AllGraph']);
-        $deceased['TokyoGraph'] = array_reverse($deceased['TokyoGraph']);
+        $Deaths_Per_Day['date'] = array_reverse($Deaths_Per_Day['date']);
+        $Deaths_Per_Day['AllGraph'] = array_reverse($Deaths_Per_Day['AllGraph']);
+        $Deaths_Per_Day['TokyoGraph'] = array_reverse($Deaths_Per_Day['TokyoGraph']);
+
+        $Cumulative_deceased['date'] = array_reverse($Cumulative_deceased['date']);
+        $Cumulative_deceased['AllGraph'] = array_reverse($Cumulative_deceased['AllGraph']);
+        $Cumulative_deceased['TokyoGraph'] = array_reverse($Cumulative_deceased['TokyoGraph']);
+
+        // echo "<pre>";
+        // var_dump($Deaths_Per_Day['AllGraph']);
+        // var_dump($Deaths_Per_Day['TokyoGraph']);        
 
         // 配列データに格納
         $datas = [
@@ -113,10 +138,18 @@ class OpenSourceController extends Controller
                 "Week_Date" => $Week_Date ,
                 "Manth_Date" => $Manth_Date ,
                 "HalfYear_Date" => $HalfYear_Date ,
-                "Year_Date" => $Year_Date
+                "Year_Date" => $Year_Date ,
+
+                "intervallist" => [
+                    "Deaths_Per_Day" => $Deaths_Per_Day ,
+                    "Cumulative_deceased" => $Cumulative_deceased
+                ]
             ],
         ];
         
+        // echo "<pre>";
+        // var_dump($datas['datelist']['intervallist']['Deaths_Per_Day']);
+
         return view('index', $datas);
     }
 }

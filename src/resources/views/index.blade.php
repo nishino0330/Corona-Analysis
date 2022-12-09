@@ -37,168 +37,18 @@
 
         <div id="access_count"></div>
         <div id="infected_chart"></div>
-        <script type="text/javascript">
-            function dateUpdate(selectGenre) {
-                console.log(selectGenre);
-                if (selectGenre === "weekly") {
-                    // weekly
-                    createChart(weekly);
-                } else if (selectGenre === "monthly") {
-                    // monthly
-                    createChart(monthly);
-                } else if (selectGenre === "half_year") {
-                    // half_year
-                    createChart(half_year);
-                } else if (selectGenre === "year") {
-                    // year
-                    createChart(year);
-                }
-            }
-
-            function createChart(dateList) {
-                infected_chart = c3.generate({
-                    bindto: '#infected_chart',
-                    data: {
-                        x: '日付',
-                        xFormat: '%Y-%m-%d',
-                        columns: [
-                            dateList,
-                            @json($infected['AllGraph']),
-                            @json($infected['TokyoGraph'])
-                        ]
-                    },
-                    axis: {
-                        x: {
-                            type: 'timeseries',
-                            tick: {
-                                format: '%m月%d日'
-                            },
-                            label: {
-                                text: '日付',
-                                position: 'outer-middle'
-                            }
-                        },
-                        y: {
-                            label: {
-                                text: '新規感染者数',
-                                position: 'outer-middle'
-                            }
-                        }
-                    }
-                });
-
-                deceased_chart = c3.generate({
-                    bindto: '#deceased_chart',
-                    data: {
-                        x: '日付',
-                        xFormat: '%Y-%m-%d',
-                        columns: [
-                            dateList,
-                            @json($deceased['AllGraph']),
-                            @json($deceased['TokyoGraph'])
-                        ]
-                    },
-                    axis: {
-                        x: {
-                            type: 'timeseries',
-                            tick: {
-                                format: '%m月%d日'
-                            },
-                            label: {
-                                text: '日付',
-                                position: 'outer-middle'
-                            }
-                        },
-                        y: {
-                            label: {
-                                text: '新規感染者数',
-                                position: 'outer-middle'
-                            }
-                        }
-                    }
-                });
-            }
-
-            let weekly = @json($datelist['Week_Date']) ,
-                monthly = @json($datelist['Manth_Date']) ,
-                half_year = @json($datelist['HalfYear_Date']) ,
-                year = @json($datelist['Year_Date'])
-            
-            var infected_chart = c3.generate({
-                bindto: '#infected_chart',
-                data: {
-                    x: '日付',
-                    xFormat: '%Y-%m-%d',
-                    columns: [
-                        weekly,
-                        @json($infected['AllGraph']),
-                        @json($infected['TokyoGraph'])
-                    ]
-                },
-                axis: {
-                    x: {
-                        type: 'timeseries',
-                        tick: {
-                            format: '%m月%d日'
-                        },
-                        label: {
-                            text: '日付',
-                            position: 'outer-middle'
-                        }
-                    },
-                    y: {
-                        label: {
-                            text: '新規感染者数',
-                            position: 'outer-middle'
-                        }
-                    }
-                }
-            });
-            
-            
-
-        </script>
 
         <div class="mb-3">
-            <label for="exampleInputuser_name" class="form-label">累計死亡者グラフ</label>
+            <label for="exampleInputuser_name" class="form-label">死亡者グラフ</label>
         </div>
+
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="intervalUpdate(this.value)">
+            <option selected value="every_other_day">１日毎の死亡者数</option>
+            <option value="Cumulative">累計死亡者数</option>
+        </select>
 
         <div id="access_count"></div>
         <div id="deceased_chart"></div>
-        <script type="text/javascript">
-            
-            var deceased_chart = c3.generate({
-                bindto: '#deceased_chart',
-                data: {
-                    x: '日付',
-                    xFormat: '%Y-%m-%d',
-                    columns: [
-                        weekly,
-                        @json($deceased['AllGraph']),
-                        @json($deceased['TokyoGraph'])
-                    ]
-                },
-                axis: {
-                    x: {
-                        type: 'timeseries',
-                        tick: {
-                            format: '%m月%d日'
-                        },
-                        label: {
-                            text: '日付',
-                            position: 'outer-middle'
-                        }
-                    },
-                    y: {
-                        label: {
-                            text: '新規感染者数',
-                            position: 'outer-middle'
-                        }
-                    }
-                }
-            });
-
-        </script>
     </form>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -213,6 +63,28 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     -->
+    <script>
+        let weekly = @json($datelist['Week_Date']),
+            monthly = @json($datelist['Manth_Date']),
+            half_year = @json($datelist['HalfYear_Date']),
+            year = @json($datelist['Year_Date']),
+            intervallist = @json($datelist['intervallist']),
+            AllGraph = @json($infected['AllGraph']),
+            TokyoGraph = @json($infected['TokyoGraph']);
+
+        let every_other_day = intervallist['Deaths_Per_Day'],
+            Cumulative = intervallist['Cumulative_deceased'];
+
+        let deceased = [
+            weekly,
+            every_other_day['AllGraph'],
+            every_other_day['TokyoGraph'],
+        ];
+
+        // console.log(every_other_day);
+        // console.log(Cumulative);
+    </script>
+    <script src="{{ asset('static/js/main.js') }}"></script>
 </body>
 
 </html>
