@@ -18,6 +18,7 @@ https://c3js.org/
 C3.jsサンプル
 https://c3js.org/samples/simple_xy.html
 
+厚生労働省
 感染者、死亡者データ
 https://www.mhlw.go.jp/stf/covid-19/open-data.html
 # Laravel-Docker-Template-2
